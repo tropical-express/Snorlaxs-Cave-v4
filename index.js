@@ -1,13 +1,13 @@
 import express from "express";
 import http from "node:http";
-import createBareServer from "@tomphttp/bare-server-node";
+import { createBareServer } from "@tomphttp/bare-server-node";
 import path from "node:path";
 import * as dotenv from "dotenv";
 dotenv.config();
 
 const __dirname = process.cwd();
 const server = http.createServer();
-const app = express(server);
+const app = express();
 const bareServer = createBareServer("/bare/");
 const PORT = process.env.PORT || 8080
 
@@ -87,7 +87,7 @@ server.on("upgrade", (req, socket, head) => {
 });
 
 server.on("listening", () => {
-  console.log(`Snorlax's Cave listening on port ${process.env.PORT}`);
+  console.log(`Snorlax's Cave listening on port ${PORT}`);
 });
 
 server.listen({
