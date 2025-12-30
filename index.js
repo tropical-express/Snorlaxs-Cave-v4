@@ -12,7 +12,7 @@ const bareServer = createBareServer("/bare/", {
   logErrors: false,
   localAddress: undefined,
   maintainer: {
-    email: "snorlax@example.com"
+    email: "snorlax@example.com" // put ur email here
   },
   http2: false,
   maxSockets: 500
