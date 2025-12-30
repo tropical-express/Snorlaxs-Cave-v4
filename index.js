@@ -1,138 +1,97 @@
-import express from "express";
-import http from "node:http";
-import { createBareServer } from "@tomphttp/bare-server-node";
-import { rateLimit } from "express-rate-limit";
-import path from "node:path";
+import { createServer } from "node:http";
+import { fileURLToPath } from "url";
+import { hostname } from "node:os";
+import { server as wisp, logging } from "@mercuryworkshop/wisp-js/server";
+import Fastify from "fastify";
+import fastifyStatic from "@fastify/static";
+import { scramjetPath } from "@mercuryworkshop/scramjet/path";
+import { epoxyPath } from "@mercuryworkshop/epoxy-transport";
+import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 import * as dotenv from "dotenv";
 dotenv.config();
 
-const __dirname = process.cwd();
-const app = express();
-const server = http.createServer();
+const publicPath = fileURLToPath(new URL("./static/", import.meta.url));
 
-app.set('trust proxy', 1);
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  limit: 10000,
-  standardHeaders: 'draft-8',
-  legacyHeaders: false,
-  validate: { trustProxy: false },
-  message: 'Too many requests from this IP, please try again after 15 minutes',
+logging.set_level(logging.NONE);
+Object.assign(wisp.options, {
+  allow_udp_streams: false,
+  hostname_blacklist: [/example\.com/],
+  dns_servers: ["1.1.1.3", "1.0.0.3"]
 });
 
-app.use(limiter);
-
-const bareServer = createBareServer("/bare/v1/", {
-  logErrors: false,
-  localAddress: undefined,
-  maintainer: {
-    email: "snorlax@example.com"
+const fastify = Fastify({
+  serverFactory: (handler) => {
+    return createServer()
+      .on("request", (req, res) => {
+        res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+        res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+        handler(req, res);
+      })
+      .on("upgrade", (req, socket, head) => {
+        if (req.url.endsWith("/wisp/")) wisp.routeRequest(req, socket, head);
+        else socket.end();
+      });
   },
-  http2: false,
-  maxSockets: 10000
 });
-const PORT = process.env.PORT || 8080
 
-function getIP(req) {
-  return req.headers['x-forwarded-for']?.split(',')[0] || req.headers['x-real-ip'] || req.socket.remoteAddress;
+fastify.register(fastifyStatic, {
+  root: publicPath,
+  decorateReply: true,
+});
+
+fastify.register(fastifyStatic, {
+  root: scramjetPath,
+  prefix: "/scram/",
+  decorateReply: false,
+});
+
+fastify.register(fastifyStatic, {
+  root: epoxyPath,
+  prefix: "/epoxy/",
+  decorateReply: false,
+});
+
+fastify.register(fastifyStatic, {
+  root: baremuxPath,
+  prefix: "/baremux/",
+  decorateReply: false,
+});
+
+fastify.get("/check-domain", (req, reply) => {
+  reply.code(200).send("OK");
+});
+
+fastify.get("/math", (req, reply) => reply.sendFile("games.html"));
+fastify.get("/english", (req, reply) => reply.sendFile("apps.html"));
+fastify.get("/about", (req, reply) => reply.sendFile("about.html"));
+fastify.get("/settings", (req, reply) => reply.sendFile("settings.html"));
+fastify.get("/changelog", (req, reply) => reply.sendFile("changelog.html"));
+fastify.get("/portal", (req, reply) => reply.sendFile("loader.html"));
+fastify.get("/dashboard", (req, reply) => reply.sendFile("agloader.html"));
+
+const secrets = ["snorlax", "tlochsta", "fowntain", "bigfoot", "burb", "derpman", "cats"];
+secrets.forEach(s => {
+  fastify.get(`/${s}`, (req, reply) => reply.sendFile(`people-secrets/${s}.html`));
+});
+
+fastify.setNotFoundHandler((req, reply) => {
+  return reply.code(404).type('text/html').sendFile('404.html');
+})
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
+
+function shutdown() {
+  fastify.close();
+  process.exit(0);
 }
 
-app.use(express.json());
-app.use(
-  express.urlencoded({
-    extended: true,
-  })
-);
+let port = parseInt(process.env.PORT || "");
+if (isNaN(port)) port = 8080;
 
-app.use(express.static(path.join(__dirname, "static")));
-
-app.get("/check-domain", (req, res) => {
-  res.status(200).send("OK");
+fastify.listen({
+  port: port,
+  host: "0.0.0.0",
+}).then(() => {
+  console.log(`Snorlax's Cave listening on port ${port}`);
 });
-
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "static", "index.html"));
-});
-app.get("/math", (req, res) => {
-  res.sendFile(path.join(__dirname, "static", "games.html"));
-});
-app.get("/english", (req, res) => {
-  res.sendFile(path.join(__dirname, "static", "apps.html"));
-});
-app.get("/about", (req, res) => {
-  res.sendFile(path.join(__dirname, "static", "about.html"));
-});
-app.get("/settings", (req, res) => {
-  res.sendFile(path.join(__dirname, "static", "settings.html"));
-});
-app.get("/changelog", (req, res) => {
-  res.sendFile(path.join(__dirname, "static", "changelog.html"));
-});
-app.get("/portal", (req, res) => {
-  res.sendFile(path.join(__dirname, "static", "loader.html"));
-});
-app.get("/dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "static", "agloader.html"));
-});
-app.get("/snorlax", (req, res) => {
-  res.sendFile(path.join(__dirname, "static/people-secrets/", "snorlax.html"));
-});
-app.get("/tlochsta", (req, res) => {
-  res.sendFile(path.join(__dirname, "static/people-secrets/", "tlochsta.html"));
-});
-app.get("/fowntain", (req, res) => {
-  res.sendFile(path.join(__dirname, "static/people-secrets/", "fowntain.html"));
-});
-app.get("/bigfoot", (req, res) => {
-  res.sendFile(path.join(__dirname, "static/people-secrets/", "bigfoot.html"));
-});
-app.get("/burb", (req, res) => {
-  res.sendFile(path.join(__dirname, "static/people-secrets/", "burb.html"));
-});
-app.get("/derpman", (req, res) => {
-  res.sendFile(path.join(__dirname, "static/people-secrets/", "derpman.html"));
-});
-app.get("/cats", (req, res) => {
-  res.sendFile(path.join(__dirname, "static/people-secrets/", "cats.html"));
-});
-
-app.use((req, res) => {
-  res.statusCode = 404;
-  res.sendFile(path.join(__dirname, './static/404.html'))
-});
-
-server.on("request", (req, res) => {
-  const ip = getIP(req);
-  Object.defineProperty(req.socket, 'remoteAddress', { value: ip, writable: true, configurable: true });
-  if (req.connection) Object.defineProperty(req.connection, 'remoteAddress', { value: ip, writable: true, configurable: true });
-
-  if (bareServer.shouldRoute(req)) {
-    bareServer.routeRequest(req, res);
-  } else {
-    app(req, res);
-  }
-});
-
-server.on("upgrade", (req, socket, head) => {
-  const ip = getIP(req);
-  Object.defineProperty(socket, 'remoteAddress', { value: ip, writable: true, configurable: true });
-  if (socket.connection) Object.defineProperty(socket.connection, 'remoteAddress', { value: ip, writable: true, configurable: true });
-
-  if (bareServer.shouldRoute(req)) {
-    bareServer.routeUpgrade(req, socket, head);
-  } else {
-    socket.end();
-  }
-});
-
-
-
-server.on("listening", () => {
-  console.log(`Snorlax's Cave listening on port ${PORT}`);
-});
-
-server.listen({
-  port: PORT,
-});
-

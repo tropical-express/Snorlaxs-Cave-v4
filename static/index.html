@@ -37,70 +37,109 @@
     </ul>
   </nav>
   <div class="proxyform-content">
-    <form class="proxyform">
-      <div data-m="bounce-down" data-m-duration="1">
-        <h1 class="large">Welcome to Snorlax's Cave!</h1>
-        <br>
-        <br>
-        <form method="POST" autocomplete="off">
-          <input type="text" name="url" class="proxy" id="search" tag="searchbar" placeholder="Search the web!">
-          <script src="/assets/js/index.js"></script>
-          <script src="/uv/uv.handler.js"></script>
-          <script src="/uv/uv.bundle.js"></script>
-          <script src="/uv/uv.config.js"></script>
-        </form>
-      </div>
+    <div data-m="bounce-down" data-m-duration="1">
+      <h1 class="large">Welcome to Snorlax's Cave!</h1>
+      <br>
+      <br>
+      <form id="sj-form" class="proxyform" onsubmit="return false;">
+        <input type="text" name="url" class="proxy" id="sj-address" tag="searchbar" placeholder="Search the web!">
+        <input type="hidden" id="sj-search-engine" value="https://www.google.com/search?q=%s">
+        <script src="/scram/scramjet.all.js"></script>
+        <script src="/baremux/index.js"></script>
+        <script>
+          const { ScramjetController } = $scramjetLoadController();
+          const scramjet = new ScramjetController({
+            files: {
+              wasm: '/scram/scramjet.wasm.wasm',
+              all: '/scram/scramjet.all.js',
+              sync: '/scram/scramjet.sync.js',
+            },
+          });
+          scramjet.init();
+          const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+          const form = document.getElementById("sj-form");
+          const address = document.getElementById("sj-address");
+          const searchEngine = document.getElementById("sj-search-engine");
+
+          async function registerSW() {
+            if (!navigator.serviceWorker) throw new Error("Browser doesn't support service workers.");
+            await navigator.serviceWorker.register("./sw.js");
+          }
+
+          form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            try {
+              await registerSW();
+            } catch (e) { console.error(e); }
+            let url = address.value.trim();
+            if (!/^http(s?):\/\//.test(url) && (url.includes(".") && url.substr(0, 1) !== " ")) {
+              url = "http://" + url;
+            } else if (!url.includes(".")) {
+              url = searchEngine.value.replace("%s", encodeURIComponent(url));
+            }
+            let wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
+            await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
+            localStorage.setItem("agUrl", url);
+            location.href = "/dashboard";
+          });
+
+          address.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") form.dispatchEvent(new Event("submit"));
+          });
+        </script>
+      </form>
+    </div>
   </div>
   <div class="v2" onclick="window.open('https://github.com/Snorlaxs-Cave/Snorlaxs-Cave-v4', '_blank')">
     <div style="cursor: pointer; color: rgb(255, 255, 255);">Snorlax & CO 2025 - Version 4</div>
-    </div>
-    <script>
-      // Custom Background Check
-      var bgUrl = localStorage.getItem('backgroundImage');
-      if (bgUrl === 'none' || bgUrl === null || bgUrl === 'https://cdn.discordapp.com/attachments/1286122796258299955/1286125045588033579/fd820958718cd7a59147c4310c8dfab3.png?ex=66ecc4c9&is=66eb7349&hm=7ff6ba0a866c17a5ee4dbecaac4ced1026e81ae8d1d09bbd12c6904848c2df52&') {
-        document.body.style.backgroundImage = `url('')`;
-      } else {
-        document.body.style.backgroundImage = `url(${bgUrl})`;
-      }
-    </script>
-    <script>
-      function changeTabName() {
-        var name = document.getElementById('name').value;
+  </div>
+  <script>
+
+    var bgUrl = localStorage.getItem('backgroundImage');
+    if (bgUrl === 'none' || bgUrl === null || bgUrl === 'https://cdn.discordapp.com/attachments/1286122796258299955/1286125045588033579/fd820958718cd7a59147c4310c8dfab3.png?ex=66ecc4c9&is=66eb7349&hm=7ff6ba0a866c17a5ee4dbecaac4ced1026e81ae8d1d09bbd12c6904848c2df52&') {
+      document.body.style.backgroundImage = `url('')`;
+    } else {
+      document.body.style.backgroundImage = `url(${bgUrl})`;
+    }
+  </script>
+  <script>
+    function changeTabName() {
+      var name = document.getElementById('name').value;
+      document.title = name;
+      localStorage.setItem('tabName', name);
+    }
+
+    function loadTabName() {
+      var name = localStorage.getItem('tabName');
+      if (name) {
         document.title = name;
-        localStorage.setItem('tabName', name);
+        document.getElementById('name').value = name;
+      }
+    }
+
+    window.addEventListener('load', loadTabName);
+  </script>
+  <script>
+    function setPanicKey() {
+      var panicKey = document.getElementById("panicKey").value;
+      var panicUrl = document.getElementById("panicUrl").value;
+
+      if (!panicUrl.startsWith("https://")) {
+        panicUrl = "https://" + panicUrl;
       }
 
-      function loadTabName() {
-        var name = localStorage.getItem('tabName');
-        if (name) {
-          document.title = name;
-          document.getElementById('name').value = name;
-        }
+      localStorage.setItem("panicKey", panicKey);
+      localStorage.setItem("panicUrl", panicUrl);
+    }
+    document.addEventListener("keydown", function (event) {
+      var storedPanicKey = localStorage.getItem("panicKey");
+      var storedPanicUrl = localStorage.getItem("panicUrl");
+
+      if (event.key === storedPanicKey && storedPanicUrl) {
+        window.location.replace(storedPanicUrl);
       }
-
-      window.addEventListener('load', loadTabName);
-    </script>
-    <script>
-      function setPanicKey() {
-        var panicKey = document.getElementById("panicKey").value;
-        var panicUrl = document.getElementById("panicUrl").value;
-
-        if (!panicUrl.startsWith("https://")) {
-          panicUrl = "https://" + panicUrl;
-        }
-
-        localStorage.setItem("panicKey", panicKey);
-        localStorage.setItem("panicUrl", panicUrl);
-      }
-      document.addEventListener("keydown", function (event) {
-        var storedPanicKey = localStorage.getItem("panicKey");
-        var storedPanicUrl = localStorage.getItem("panicUrl");
-
-        if (event.key === storedPanicKey && storedPanicUrl) {
-          window.location.replace(storedPanicUrl);
-        }
-      });
-    </script>
+    });
+  </script>
 </body>
 <script>
   function changeIcon() {
@@ -299,7 +338,7 @@
   });
 </script>
 <script>
-  // Custom Background Check
+
   var bgUrl = localStorage.getItem('backgroundImage');
   if (bgUrl === 'none' || bgUrl === null || bgUrl === '') {
     document.body.style.backgroundImage = `url('/assets/img/snorlax_background.jpg')`;

@@ -1,30 +1,16 @@
 const form = document.querySelector("form");
 const input = document.querySelector("input");
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  window.navigator.serviceWorker
-    .register("./sw.js", {
-      scope: __uv$config.prefix,
-    })
-    .then(() => {
-      let url = input.value.trim();
-      if (!isUrl(url)) url = "https://www.google.com/search?q=" + url;
-      else if (!(url.startsWith("https://") || url.startsWith("http://")))
-        url = "http://" + url;
-      localStorage.setItem("encodedUrl", __uv$config.encodeUrl(url));
-      //remove.forEach(element => {
-        //element.remove();
-      //});
-      location.href = "/portal";
-    });
-});
-
-function isUrl(val = "") {
-  if (
-    /^http(s?):\/\//.test(val) ||
-    (val.includes(".") && val.substr(0, 1) !== " ")
-  )
-    return true;
-  return false;
+if (form) {
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    let url = input.value.trim();
+    if (!/^http(s?):\/\//.test(url) && (url.includes(".") && url.substr(0, 1) !== " ")) {
+      url = "http://" + url;
+    } else if (!url.includes(".")) {
+      url = "https://www.google.com/search?q=" + url;
+    }
+    localStorage.setItem("agUrl", url);
+    location.href = "/dashboard";
+  });
 }

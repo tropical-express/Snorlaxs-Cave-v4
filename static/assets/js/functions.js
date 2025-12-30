@@ -1,20 +1,16 @@
 function apps(url, ag) {
-    window.navigator.serviceWorker.register('/sw.js', {
-        scope: __uv$config.prefix
-    }).then(() => {
-        localStorage.setItem('currentAg', ag, location.href = __uv$config.prefix + __uv$config.encodeUrl(url));
-        location.href = '/dashboard';
-        agU = Ultraviolet.codec.xor.encode(url);
-        localStorage.setItem('agUrl', agU);
-    });
+    localStorage.setItem('currentAg', ag);
+    localStorage.setItem('agUrl', 'https://' + url);
+    location.href = '/dashboard';
 }
 
 function openLink(url) {
-    apps('https://' + url);
+    localStorage.setItem('agUrl', 'https://' + url);
+    location.href = '/dashboard';
 }
 
 function send(url) {
-  location.href = window.location.origin + url;
+    location.href = window.location.origin + url;
 }
 
 function ourDiscord() {

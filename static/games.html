@@ -19,7 +19,7 @@
   <script src="/assets/js/functions.js"></script>
 </head>
 
-<!-- Google tag (gtag.js) -->
+
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZTCTYH80S1"></script>
 
 <body>
@@ -349,14 +349,6 @@
     });
   </script>
   <script src="/assets/js/index.js"></script>
-  <script src="/uv/uv.bundle.js"></script>
-  <script src="/uv/uv.config.js"></script>
-  <script>
-    window.navigator.serviceWorker
-      .register("/sw.js", {
-        scope: __uv$config.prefix,
-      })
-  </script>
   <script>
     document.querySelector('.apps').addEventListener('contextmenu', e => {
 
@@ -418,9 +410,9 @@
         alert('No games available to select from.');
       }
     }
-    </script>    
+  </script>
   <script>
-    // Custom Background Check
+
     var bgUrl = localStorage.getItem('backgroundImage');
     if (bgUrl === 'none' || bgUrl === null || bgUrl === '') {
       document.body.style.backgroundImage = `url('/assets/img/snorlax_background.jpg')`;
@@ -568,7 +560,7 @@
 
       if (name && url && image) {
         const apps = JSON.parse(localStorage.getItem('apps')) || [];
-        const id = new Date().getTime(); 
+        const id = new Date().getTime();
         apps.push({ id, name, url, image });
         localStorage.setItem('apps', JSON.stringify(apps));
         addAppToDOM(id, name, url, image);
@@ -613,12 +605,6 @@
         addAppToDOM(app.id, app.name, app.url, app.image);
       });
     });
-  </script>
-  <script>
-    window.navigator.serviceWorker
-      .register("./sw.js", {
-        scope: __uv$config.prefix,
-      })
   </script>
   <script>
     const firstVisit = localStorage.getItem('firstVisit2');

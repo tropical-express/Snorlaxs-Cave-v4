@@ -1,8 +1,16 @@
-importScripts("./uv/uv.bundle.js");
-importScripts("./uv/uv.config.js");
-importScripts("./uv/uv.sw.js");
+importScripts('/scram/scramjet.all.js');
 
-const sw = new UVServiceWorker();
-let userKey = new URL(location).searchParams.get('userkey');
+const { ScramjetServiceWorker } = $scramjetLoadWorker();
+const scramjet = new ScramjetServiceWorker();
 
-self.addEventListener("fetch", (event) => event.respondWith(sw.fetch(event)));
+async function handleRequest(event) {
+    await scramjet.loadConfig();
+    if (scramjet.route(event)) {
+        return scramjet.fetch(event);
+    }
+    return fetch(event.request);
+}
+
+self.addEventListener('fetch', (event) => {
+    event.respondWith(handleRequest(event));
+});

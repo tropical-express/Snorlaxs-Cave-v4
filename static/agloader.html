@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,27 +19,28 @@
   <script src="/assets/js/functions.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
   <script>
-    // Custom Background Check
-    var bgUrl = localStorage.getItem('backgroundImage');
-    if (bgUrl === 'none' || bgUrl === null || bgUrl === '') {
-      document.body.style.backgroundImage = `url('/assets/img/snorlax_background.jpg')`;
-    } else {
-      document.body.style.backgroundImage = `url(${bgUrl})`;
-    }
+    window.addEventListener("DOMContentLoaded", function () {
+      var bgUrl = localStorage.getItem('backgroundImage');
+      if (bgUrl === 'none' || bgUrl === null || bgUrl === '') {
+        document.body.style.backgroundImage = `url('/assets/img/snorlax_background.jpg')`;
+      } else {
+        document.body.style.backgroundImage = `url(${bgUrl})`;
+      }
+    });
   </script>
   <script>
     function changeTabName() {
-        var name = document.getElementById('name').value;
-        document.title = name;
-        localStorage.setItem('tabName', name);
+      var name = document.getElementById('name').value;
+      document.title = name;
+      localStorage.setItem('tabName', name);
     }
 
     function loadTabName() {
-        var name = localStorage.getItem('tabName');
-        if (name) {
-            document.title = name;
-            document.getElementById('name').value = name;
-        }
+      var name = localStorage.getItem('tabName');
+      if (name) {
+        document.title = name;
+        document.getElementById('name').value = name;
+      }
     }
 
     window.addEventListener('load', loadTabName);
@@ -64,123 +66,123 @@
       }
     });
   </script>
-</body>
-<script>
-function changeIcon() {
-  var iconUrl = document.getElementById("iconUrl").value;
-  localStorage.setItem("iconUrl", iconUrl);
+  </body>
+  <script>
+    function changeIcon() {
+      var iconUrl = document.getElementById("iconUrl").value;
+      localStorage.setItem("iconUrl", iconUrl);
 
-  var link = document.querySelector("link[rel*='icon']");
-  if (link) {
-    link.parentNode.removeChild(link);
-  }
+      var link = document.querySelector("link[rel*='icon']");
+      if (link) {
+        link.parentNode.removeChild(link);
+      }
 
-  var newLink = document.createElement("link");
-  newLink.type = "image/x-icon";
-  newLink.rel = "icon";
-  newLink.href = iconUrl;
-  document.head.appendChild(newLink);
-}
+      var newLink = document.createElement("link");
+      newLink.type = "image/x-icon";
+      newLink.rel = "icon";
+      newLink.href = iconUrl;
+      document.head.appendChild(newLink);
+    }
 
-window.addEventListener("DOMContentLoaded", function () {
-  var storedIconUrl = localStorage.getItem("iconUrl");
-  if (storedIconUrl) {
-    document.getElementById("iconUrl").value = storedIconUrl;
-    changeIcon();
-  }
-});
-window.addEventListener("DOMContentLoaded", function () {
-  var storedIconUrl = localStorage.getItem("iconUrl");
-  if (storedIconUrl) {
-    var link = document.createElement("link");
-    link.type = "image/x-icon";
-    link.rel = "icon";
-    link.href = storedIconUrl;
-    document.head.appendChild(link);
-  }
-});
-</script>
-<script>
-window.onload = function () {
-  var savedImage = localStorage.getItem('backgroundImage');
-  if (savedImage) {
-    var output = document.body;
-    output.style.backgroundImage = "url('" + savedImage + "')";
-    output.style.backgroundSize = "cover";
-    output.style.backgroundRepeat = "no-repeat";
-  }
-};
-
-var loadFile = function () {
-  document.getElementById('fileInput').click();
-};
-
-var showImage = function (event) {
-  var reader = new FileReader();
-  reader.onload = function () {
-    var output = document.body;
-    output.style.backgroundImage = "url('" + reader.result + "')";
-    output.style.backgroundSize = "cover";
-    output.style.backgroundRepeat = "no-repeat";
-
-    localStorage.setItem('backgroundImage', reader.result);
-  };
-  reader.readAsDataURL(event.target.files[0]);
-};
-</script>
-<script>
-window.onload = function () {
-  var savedImage = localStorage.getItem('backgroundImage');
-  if (savedImage) {
-    var output = document.body;
-    output.style.backgroundImage = "url('" + savedImage + "')";
-    output.style.backgroundSize = "cover";
-    output.style.backgroundRepeat = "no-repeat";
-  }
-};
-
-var loadFile = function () {
-  document.getElementById('fileInput').click();
-};
-
-var showImage = function (event) {
-  var reader = new FileReader();
-  reader.onload = function () {
-    var output = document.body;
-    output.style.backgroundImage = "url('" + reader.result + "')";
-    output.style.backgroundSize = "cover";
-    output.style.backgroundRepeat = "no-repeat";
-
-    localStorage.setItem('backgroundImage', reader.result);
-  };
-  reader.readAsDataURL(event.target.files[0]);
-};
-</script>
-<script>
-window.addEventListener('keydown', (event) => {
-  const keysPressed = (event.key === '~');
-  if (keysPressed) {
-    localStorage.clear();
-    alert('All settings save data cleared');
-    location.reload(true);
-  }
-});
-</script>
-<script>
-window.addEventListener('keydown', (event) => {
-  const keysPressed = (event.key === '`');
-  if (keysPressed) {
-    document.cookie.split(";").forEach(cookie => {
-      document.cookie = cookie.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    window.addEventListener("DOMContentLoaded", function () {
+      var storedIconUrl = localStorage.getItem("iconUrl");
+      if (storedIconUrl) {
+        document.getElementById("iconUrl").value = storedIconUrl;
+        changeIcon();
+      }
     });
-    alert('All saved cookie data cleared');
-    location.reload(true);
-  }
-});
-</script>
+    window.addEventListener("DOMContentLoaded", function () {
+      var storedIconUrl = localStorage.getItem("iconUrl");
+      if (storedIconUrl) {
+        var link = document.createElement("link");
+        link.type = "image/x-icon";
+        link.rel = "icon";
+        link.href = storedIconUrl;
+        document.head.appendChild(link);
+      }
+    });
+  </script>
+  <script>
+    window.onload = function () {
+      var savedImage = localStorage.getItem('backgroundImage');
+      if (savedImage) {
+        var output = document.body;
+        output.style.backgroundImage = "url('" + savedImage + "')";
+        output.style.backgroundSize = "cover";
+        output.style.backgroundRepeat = "no-repeat";
+      }
+    };
+
+    var loadFile = function () {
+      document.getElementById('fileInput').click();
+    };
+
+    var showImage = function (event) {
+      var reader = new FileReader();
+      reader.onload = function () {
+        var output = document.body;
+        output.style.backgroundImage = "url('" + reader.result + "')";
+        output.style.backgroundSize = "cover";
+        output.style.backgroundRepeat = "no-repeat";
+
+        localStorage.setItem('backgroundImage', reader.result);
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    };
+  </script>
+  <script>
+    window.onload = function () {
+      var savedImage = localStorage.getItem('backgroundImage');
+      if (savedImage) {
+        var output = document.body;
+        output.style.backgroundImage = "url('" + savedImage + "')";
+        output.style.backgroundSize = "cover";
+        output.style.backgroundRepeat = "no-repeat";
+      }
+    };
+
+    var loadFile = function () {
+      document.getElementById('fileInput').click();
+    };
+
+    var showImage = function (event) {
+      var reader = new FileReader();
+      reader.onload = function () {
+        var output = document.body;
+        output.style.backgroundImage = "url('" + reader.result + "')";
+        output.style.backgroundSize = "cover";
+        output.style.backgroundRepeat = "no-repeat";
+
+        localStorage.setItem('backgroundImage', reader.result);
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    };
+  </script>
+  <script>
+    window.addEventListener('keydown', (event) => {
+      const keysPressed = (event.key === '~');
+      if (keysPressed) {
+        localStorage.clear();
+        alert('All settings save data cleared');
+        location.reload(true);
+      }
+    });
+  </script>
+  <script>
+    window.addEventListener('keydown', (event) => {
+      const keysPressed = (event.key === '`');
+      if (keysPressed) {
+        document.cookie.split(";").forEach(cookie => {
+          document.cookie = cookie.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+        alert('All saved cookie data cleared');
+        location.reload(true);
+      }
+    });
+  </script>
 </head>
 <div id="urlBar">
- <input type="text" name="url" class="proxy" id="search" tag="searchbar" placeholder="Search the web!">
+  <input type="text" name="url" class="proxy" id="search" tag="searchbar" placeholder="Search the web!">
   <i class="bi bi-search search"></i>
   <button class="bi bi-arrows-fullscreen fs" onclick="toggleFs()" title="Fullscreen"></button>
   <button class="bi bi-box-arrow-up-right ab" onclick="openWindow()" title="Open in About:Blank"></button>
@@ -191,37 +193,70 @@ window.addEventListener('keydown', (event) => {
   <button class="bi bi-box-arrow-right exit" onclick="exit()" title="Return Home"></button>
   <button class="bi bi-code-slash devTools" onclick="devTools()" title="Inspect Element"></button>
 </div>
-<iframe src="loading.html" id="siteurl"></iframe>
-<body>
-<script src="/assets/js/index.js"></script>
-<script src="/uv/uv.bundle.js"></script>
-<script src="/uv/uv.bundle.js"></script>
-<script src="/uv/uv.config.js"></script>
-<script src="/assets/js/agloader.js"></script>
-<script>
-    window.navigator.serviceWorker
-    .register("/sw.js", {
-      scope: __uv$config.prefix,
-    })
-  </script>
-  <script>
-    window.onload = function () {
-        let encodedAg = localStorage.getItem("agUrl");
-        encodedAg = "/service/" + encodedAg;
-        document.querySelector("#siteurl").src = encodedAg;
-    };
-</script>
-<script>
-  const uv = new Ultraviolet({
-    prefix: __uv$config.prefix,
-    bare: __uv$config.bare,
-    encodeUrl: __uv$config.encodeUrl,
-    decodeUrl: __uv$config.decodeUrl
-  });
+<div id="proxy-container" style="width:100%;height:calc(100vh - 50px);position:fixed;top:50px;left:0;display:none;">
+</div>
 
-  document.getElementById('siteurl').addEventListener('load', function() {
-    const decodedUrl = __uv$config.decodeUrl(this.contentWindow.location.pathname.slice(__uv$config.prefix.length));
-    document.getElementById('search').value = decodedUrl;
-  });
-</script>
+<body>
+  <script src="/scram/scramjet.all.js"></script>
+  <script src="/baremux/index.js"></script>
+  <script>
+    const { ScramjetController } = $scramjetLoadController();
+    const scramjet = new ScramjetController({
+      files: {
+        wasm: '/scram/scramjet.wasm.wasm',
+        all: '/scram/scramjet.all.js',
+        sync: '/scram/scramjet.sync.js',
+      },
+    });
+    scramjet.init();
+    const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+
+    async function registerSW() {
+      if (!navigator.serviceWorker) throw new Error("Browser doesn't support service workers.");
+      await navigator.serviceWorker.register("./sw.js");
+    }
+
+    async function loadProxy(url) {
+      await registerSW();
+      let wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
+      await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
+
+      const container = document.getElementById("proxy-container");
+      container.style.display = "block";
+
+      const frame = scramjet.createFrame();
+      frame.frame.style.cssText = "width:100%;height:100%;border:none;";
+      container.appendChild(frame.frame);
+      frame.go(url);
+
+      window.currentFrame = frame;
+
+      const searchInput = document.getElementById("search");
+      if (searchInput) searchInput.value = url;
+    }
+
+    window.addEventListener("load", async () => {
+      const storedUrl = localStorage.getItem("agUrl");
+      if (storedUrl) {
+        loadProxy(storedUrl);
+      }
+    });
+
+    const search = document.getElementById("search");
+    if (search) {
+      search.addEventListener("keydown", async function (e) {
+        if (e.key == "Enter" && e.target.value) {
+          let url = e.target.value.trim();
+          if (!/^http(s?):\/\//.test(url) && (url.includes(".") && url.substr(0, 1) !== " ")) {
+            url = "http://" + url;
+          } else if (!url.includes(".")) {
+            url = "https://www.google.com/search?q=" + url;
+          }
+          localStorage.setItem("agUrl", url);
+          loadProxy(url);
+        }
+      });
+    }
+  </script>
+  <script src="/assets/js/agloader.js"></script>
 </body>

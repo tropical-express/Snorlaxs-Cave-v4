@@ -18,7 +18,7 @@
   <script src="/assets/js/functions.js"></script>
 </head>
 
-<!-- Google tag (gtag.js) -->
+
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZTCTYH80S1"></script>
 
 <body>
@@ -66,8 +66,8 @@
           style="width:100px;height:100px;"><br>Google</img>
       </a>
       <a href="#" onclick="openLink(`snorlaxs-messaging.onrender.com`)">
-        <img src="/assets/img/sm.png" class="rounded" draggable="false"
-          style="width:100px;height:100px;"><br>Snorlax Messaging</img>
+        <img src="/assets/img/sm.png" class="rounded" draggable="false" style="width:100px;height:100px;"><br>Snorlax
+        Messaging</img>
       </a>
       <a href="#" onclick="openLink('e.widgetbot.io/channels/1107344487958724681/1118576886038143157')">
         <img src="/assets/img/widger.png" class="rounded" draggable="false" style="width:100px;height:100px;"><br>Widget
@@ -134,11 +134,12 @@
         Code</img>
       </a>
       <a href="#" onclick="openLink('freedns.afraid.org')">
-        <img src="/assets/img/dns.png" class="rounded" draggable="false" style="width:100px;height:100px;"><br>Free DNS</img>
+        <img src="/assets/img/dns.png" class="rounded" draggable="false" style="width:100px;height:100px;"><br>Free
+        DNS</img>
       </a>
       <a href="#" onclick="openLink('hianime.to')">
-        <img src="/assets/img/ani.png" class="rounded" draggable="false"
-          style="width:100px;height:100px;"><br>H! Anime</img>
+        <img src="/assets/img/ani.png" class="rounded" draggable="false" style="width:100px;height:100px;"><br>H!
+        Anime</img>
       </a>
       <a href="#" onclick="openLink('play.geforcenow.com')">
         <img src="/assets/img/geforce.png" class="rounded" draggable="false"
@@ -225,14 +226,7 @@
     });
   </script>
   <script src="/assets/js/index.js"></script>
-  <script src="/uv/uv.bundle.js"></script>
-  <script src="/uv/uv.config.js"></script>
-  <script>
-    window.navigator.serviceWorker
-      .register("/sw.js", {
-        scope: __uv$config.prefix,
-      })
-  </script>
+
   <script>
     document.querySelector('.apps').addEventListener('contextmenu', e => {
 
@@ -283,7 +277,7 @@
     });
   </script>
   <script>
-    // Custom Background Check
+
     var bgUrl = localStorage.getItem('backgroundImage');
     if (bgUrl === 'none' || bgUrl === null || bgUrl === '') {
       document.body.style.backgroundImage = `url('/assets/img/snorlax_background.jpg')`;
@@ -431,7 +425,7 @@
 
       if (name && url && image) {
         const apps = JSON.parse(localStorage.getItem('apps')) || [];
-        const id = new Date().getTime(); 
+        const id = new Date().getTime();
         apps.push({ id, name, url, image });
         localStorage.setItem('apps', JSON.stringify(apps));
         addAppToDOM(id, name, url, image);
@@ -477,12 +471,7 @@
       });
     });
   </script>
-  <script>
-    window.navigator.serviceWorker
-      .register("./sw.js", {
-        scope: __uv$config.prefix,
-      })
-  </script>
+
   <script>
     const firstVisit = localStorage.getItem('firstVisit2');
     if (!firstVisit) {

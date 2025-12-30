@@ -1,7 +1,5 @@
-@font-face {
-    font-family: poppins;
-    src: url(/assets/fonts/poppins.ttf);
-}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
   @font-face {
     font-family: sans;
     src: url(/assets/fonts/sans.ttf);
