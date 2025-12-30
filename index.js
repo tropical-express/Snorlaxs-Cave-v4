@@ -1,3 +1,4 @@
+import { ChemicalServer } from "chemicaljs";
 import express from "express";
 import http from "node:http";
 import { createBareServer } from "@tomphttp/bare-server-node";
@@ -7,8 +8,8 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 const __dirname = process.cwd();
+const [app, listen] = new ChemicalServer();
 const server = http.createServer();
-const app = express();
 
 app.set('trust proxy', 1);
 
@@ -87,10 +88,17 @@ app.get("/derpman", (req, res) => {
 app.get("/cats", (req, res) => {
   res.sendFile(path.join(__dirname, "static/people-secrets/", "cats.html"));
 });
+
+app.get("/check-domain", (req, res) => {
+  res.status(200).send("OK");
+});
+
 app.use((req, res) => {
   res.statusCode = 404;
   res.sendFile(path.join(__dirname, './static/404.html'))
 });
+
+app.serveChemical();
 
 server.on("request", (req, res) => {
   if (bareServer.shouldRoute(req)) {
