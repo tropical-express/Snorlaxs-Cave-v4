@@ -89,10 +89,6 @@ app.get("/cats", (req, res) => {
   res.sendFile(path.join(__dirname, "static/people-secrets/", "cats.html"));
 });
 
-app.get("/check-domain", (req, res) => {
-  res.status(200).send("OK");
-});
-
 app.use((req, res) => {
   res.statusCode = 404;
   res.sendFile(path.join(__dirname, './static/404.html'))
