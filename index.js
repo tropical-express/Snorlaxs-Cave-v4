@@ -10,9 +10,11 @@ const __dirname = process.cwd();
 const server = http.createServer();
 const app = express();
 
+app.set('trust proxy', 1);
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 1000,
+  limit: 2000,
   standardHeaders: 'draft-8',
   legacyHeaders: false,
   message: 'Too many requests from this IP, please try again after 15 minutes',
@@ -27,7 +29,7 @@ const bareServer = createBareServer("/bare/", {
     email: "snorlax@example.com" // put ur email here
   },
   http2: false,
-  maxSockets: 500
+  maxSockets: 2000
 });
 const PORT = process.env.PORT || 8080
 
