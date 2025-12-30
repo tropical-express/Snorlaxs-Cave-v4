@@ -8,7 +8,15 @@ dotenv.config();
 const __dirname = process.cwd();
 const server = http.createServer();
 const app = express();
-const bareServer = createBareServer("/bare/");
+const bareServer = createBareServer("/bare/", {
+  logErrors: false,
+  localAddress: undefined,
+  maintainer: {
+    email: "snorlax@example.com"
+  },
+  http2: false,
+  maxSockets: 500
+});
 const PORT = process.env.PORT || 8080
 
 app.use(express.json());
