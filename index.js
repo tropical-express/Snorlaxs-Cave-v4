@@ -1,6 +1,7 @@
 import express from "express";
 import http from "node:http";
 import { createBareServer } from "@tomphttp/bare-server-node";
+import { rateLimit } from "express-rate-limit";
 import path from "node:path";
 import * as dotenv from "dotenv";
 dotenv.config();
@@ -8,6 +9,17 @@ dotenv.config();
 const __dirname = process.cwd();
 const server = http.createServer();
 const app = express();
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 1000,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  message: 'Too many requests from this IP, please try again after 15 minutes',
+});
+
+app.use(limiter);
+
 const bareServer = createBareServer("/bare/", {
   logErrors: false,
   localAddress: undefined,
