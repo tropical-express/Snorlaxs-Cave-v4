@@ -1,4 +1,3 @@
-import { ChemicalServer } from "chemicaljs";
 import express from "express";
 import http from "node:http";
 import { createBareServer } from "@tomphttp/bare-server-node";
@@ -8,14 +7,14 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 const __dirname = process.cwd();
-const [app, listen] = new ChemicalServer();
+const app = express();
 const server = http.createServer();
 
 app.set('trust proxy', 1);
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 2000,
+  limit: 10000,
   standardHeaders: 'draft-8',
   legacyHeaders: false,
   message: 'Too many requests from this IP, please try again after 15 minutes',
@@ -27,10 +26,10 @@ const bareServer = createBareServer("/bare/", {
   logErrors: false,
   localAddress: undefined,
   maintainer: {
-    email: "snorlax@example.com" // put ur email here
+    email: "snorlax@example.com"
   },
   http2: false,
-  maxSockets: 2000
+  maxSockets: 10000
 });
 const PORT = process.env.PORT || 8080
 
@@ -94,8 +93,6 @@ app.use((req, res) => {
   res.sendFile(path.join(__dirname, './static/404.html'))
 });
 
-app.serveChemical();
-
 server.on("request", (req, res) => {
   if (bareServer.shouldRoute(req)) {
     bareServer.routeRequest(req, res);
@@ -119,3 +116,4 @@ server.on("listening", () => {
 server.listen({
   port: PORT,
 });
+
