@@ -10,19 +10,20 @@ const __dirname = process.cwd();
 const app = express();
 const server = http.createServer();
 
-app.set('trust proxy', true);
+app.set('trust proxy', 1);
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 10000,
   standardHeaders: 'draft-8',
   legacyHeaders: false,
+  validate: { trustProxy: false },
   message: 'Too many requests from this IP, please try again after 15 minutes',
 });
 
 app.use(limiter);
 
-const bareServer = createBareServer("/bare/", {
+const bareServer = createBareServer("/bare/v1/", {
   logErrors: false,
   localAddress: undefined,
   maintainer: {
@@ -104,6 +105,7 @@ app.use((req, res) => {
 server.on("request", (req, res) => {
   const ip = getIP(req);
   Object.defineProperty(req.socket, 'remoteAddress', { value: ip, writable: true, configurable: true });
+  if (req.connection) Object.defineProperty(req.connection, 'remoteAddress', { value: ip, writable: true, configurable: true });
 
   if (bareServer.shouldRoute(req)) {
     bareServer.routeRequest(req, res);
@@ -115,6 +117,7 @@ server.on("request", (req, res) => {
 server.on("upgrade", (req, socket, head) => {
   const ip = getIP(req);
   Object.defineProperty(socket, 'remoteAddress', { value: ip, writable: true, configurable: true });
+  if (socket.connection) Object.defineProperty(socket.connection, 'remoteAddress', { value: ip, writable: true, configurable: true });
 
   if (bareServer.shouldRoute(req)) {
     bareServer.routeUpgrade(req, socket, head);
@@ -122,6 +125,7 @@ server.on("upgrade", (req, socket, head) => {
     socket.end();
   }
 });
+
 
 
 server.on("listening", () => {
